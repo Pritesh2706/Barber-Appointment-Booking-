@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elite Cuts Barber Shop - Appointment Booking</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        }
+        .hero-section {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/1df54387-cae6-4afc-8231-ac5f815abf09.png') center/cover no-repeat;
+            opacity: 0.1;
+            z-index: 0;
+        }
+        .hero-section > * {
+            position: relative;
+            z-index: 1;
+        }
+        .booking-form, .confirmation-section, .invoice-section {
+            max-width: 700px;
+            margin: 20px auto;
+        }
+        .confirmation-section, .invoice-section {
+            display: none;
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .invoice {
+            border: 2px solid #d1d5db;
+            padding: 25px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        .barber-shop-image {
+            width: 100%;
+            max-width: 500px;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+        .service-price {
+            font-weight: bold;
+            color: #059669;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            transition: all 0.2s ease;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <header class="hero-section py-16 text-center">
+        <h1 class="text-5xl font-bold mb-4">Welcome to Elite Cuts Barber Shop</h1>
+        <p class="text-xl mb-8 max-w-2xl mx-auto">Experience premium grooming services. Book your appointment today and step out looking sharp!</p>
+        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/95a4089c-262e-4c12-ba8d-73e03760935c.png" 
+             alt="Classic vintage barber chair in a modern shop with mirrors, scissors, and grooming tools, creating an inviting atmosphere for customers" 
+             class="barber-shop-image mx-auto"
+             onerror="this.src='https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/c644e3f0-accf-4593-aeb9-35f4b2812b63.png'" />
+    </header>
+
+    <main class="max-w-6xl mx-auto p-6">
+        <!-- Booking Form Section -->
+        <section id="booking-form-section" class="booking-form bg-white p-10 rounded-xl shadow-lg">
+            <h2 class="text-3xl font-bold mb-8 text-center text-gray-800">Book Your Appointment</h2>
+            <form id="booking-form" class="space-y-6">
+                <div>
+                    <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">Full Name</label>
+                    <input type="text" id="name" name="name" required 
+                           class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition">
+                </div>
+                <div>
+                    <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
+                    <input type="email" id="email" name="email" required 
+                           class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition">
+                </div>
+                <div>
+                    <label for="phone" class="block text-sm font-semibold text-gray-700 mb-2">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" required 
+                           class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition">
+                </div>
+                <div>
+                    <label for="service" class="block text-sm font-semibold text-gray-700 mb-2">Service</label>
+                    <select id="service" name="service" required 
+                            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition">
+                        <option value="">Select a service</option>
+                        <option value="Haircut">Haircut - $25</option>
+                        <option value="Shave">Traditional Shave - $15</option>
+                        <option value="Hair Color">Hair Color - $50</option>
+                        <option value="Beard Trim">Beard Trim - $20</option>
+                        <option value="Haircut and Beard">Haircut & Beard Combo - $40</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="date" class="block text-sm font-semibold text-gray-700 mb-2">Preferred Date</label>
+                    <input type="date" id="date" name="date" required 
+                           class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition">
+                </div>
+                <div>
+                    <label for="time" class="block text-sm font-semibold text-gray-700 mb-2">Preferred Time</label>
+                    <input type="time" id="time" name="time" required 
+                           class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition">
+                </div>
+                <button type="submit" 
+                        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg text-lg transition transform">
+                    Confirm Booking
+                </button>
+            </form>
+        </section>
+
+        <!-- Booking Confirmation Section -->
+        <section id="confirmation-section" class="confirmation-section animate-fade-in bg-green-50 p-10 rounded-xl shadow-lg">
+            <h2 class="text-3xl font-bold mb-6 text-center text-green-800">Booking Confirmed!</h2>
+            <div class="text-center mb-6">
+                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/5ee6f7c3-270d-4eb3-83d8-705fb42a0b2e.png" alt="Green checkmark icon indicating successful confirmation" class="mx-auto mb-4">
+                <p class="text-lg text-gray-700">Thank you for choosing Elite Cuts! Your appointment has been successfully scheduled.</p>
+            </div>
+            <div id="confirmation-details" class="bg-white p-6 rounded-lg shadow-inner space-y-3 mb-6"></div>
+            <button id="view-invoice-btn" 
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg text-lg transition transform">
+                View Invoice Receipt
+            </button>
+        </section>
+
+        <!-- Invoice Section -->
+        <section id="invoice-section" class="invoice-section animate-fade-in">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-800">Appointment Invoice Receipt</h2>
+                <p class="text-gray-600 mt-2">Review your booking details and confirm payment</p>
+            </div>
+            <div class="invoice">
+                <div class="text-center mb-6">
+                    <h3 class="text-2xl font-bold text-gray-800">Elite Cuts Barber Shop</h3>
+                    <p class="text-gray-600">Professional Grooming Services</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700 mb-6">
+                    <div>
+                        <p><strong>Address:</strong> 123 Main Street, Downtown City, ST 12345</p>
+                        <p><strong>Phone:</strong> (555) 123-4567</p>
+                        <p><strong>Email:</strong> info@elitecutsbarber.com</p>
+                    </div>
+                    <div>
+                        <p><strong>Invoice ID:</strong> INV-<span id="invoice-id"></span></p>
+                        <p><strong>Issue Date:</strong> <span id="invoice-issued-date"></span></p>
+                    </div>
+                </div>
+                <hr class="my-6 border-gray-300">
+                <div id="invoice-details" class="space-y-4 text-sm"></div>
+                <hr class="my-6 border-gray-300">
+                <div class="flex flex-col md:flex-row gap-4">
+                    <button id="email-owner-btn" 
+                            class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg text-lg transition transform">
+                        Email Notification to Owner
+                    </button>
+                    <button id="download-invoice-btn" 
+                            class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg text-lg transition transform">
+                        Download Invoice PDF
+                    </button>
+                </div>
+                <p class="text-xs text-gray-500 mt-4 text-center">
+                    Payments can be made on-site or via card at time of service. Thank you for your business!
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-6 text-center">
+        <p>© 2024 Elite Cuts Barber Shop. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Service prices mapping
+        const prices = {
+            'Haircut': 25,
+            'Traditional Shave': 15,
+            'Hair Color': 50,
+            'Beard Trim': 20,
+            'Haircut & Beard Combo': 40
+        };
+
+        let bookingData = {};
+
+        const form = document.getElementById('booking-form');
+        const confirmationSection = document.getElementById('confirmation-section');
+        const invoiceSection = document.getElementById('invoice-section');
+        const confirmationDetails = document.getElementById('confirmation-details');
+        const invoiceDetails = document.getElementById('invoice-details');
+        const viewInvoiceBtn = document.getElementById('view-invoice-btn');
+        const emailOwnerBtn = document.getElementById('email-owner-btn');
+        const downloadInvoiceBtn = document.getElementById('download-invoice-btn');
+
+        // Handle form submission
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            bookingData = {
+                name: document.getElementById('name').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                service: document.getElementById('service').value,
+                date: document.getElementById('date').value,
+                time: document.getElementById('time').value,
+                price: prices[document.getElementById('service').value],
+                invoiceDate: new Date().toLocaleDateString(),
+                invoiceId: Math.floor(Math.random() * 1000000).toString().padStart(6, '0')
+            };
+
+            // Hide form, show confirmation
+            document.getElementById('booking-form-section').style.display = 'none';
+            confirmationSection.style.display = 'block';
+
+            // Populate confirmation details
+            confirmationDetails.innerHTML = `
+                <div class="space-y-2">
+                    <p><span class="font-semibold">Name:</span> ${bookingData.name}</p>
+                    <p><span class="font-semibold">Email:</span> ${bookingData.email}</p>
+                    <p><span class="font-semibold">Phone:</span> ${bookingData.phone}</p>
+                    <p><span class="font-semibold">Service:</span> ${bookingData.service} - <span class="service-price">$${bookingData.price}</span></p>
+                    <p><span class="font-semibold">Date:</span> ${new Date(bookingData.date).toDateString()}</p>
+                    <p><span class="font-semibold">Time:</span> ${bookingData.time}</p>
+                </div>
+            `;
+
+            // Scroll to confirmation
+            confirmationSection.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Handle viewing invoice
+        viewInvoiceBtn.addEventListener('click', function() {
+            confirmationSection.style.display = 'none';
+            invoiceSection.style.display = 'block';
+
+            // Populate invoice details
+            document.getElementById('invoice-id').textContent = bookingData.invoiceId;
+            document.getElementById('invoice-issued-date').textContent = bookingData.invoiceDate;
+
+            invoiceDetails.innerHTML = `
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h4 class="font-semibold mb-3 text-gray-800">Customer Details</h4>
+                    <p><strong>Name:</strong> ${bookingData.name}</p>
+                    <p><strong>Email:</strong> ${bookingData.email}</p>
+                    <p><strong>Phone:</strong> ${bookingData.phone}</p>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h4 class="font-semibold mb-3 text-gray-800">Service Information</h4>
+                    <p><strong>Service:</strong> ${bookingData.service}</p>
+                    <p><strong>Appointment Date:</strong> ${new Date(bookingData.date).toDateString()}</p>
+                    <p><strong>Appointment Time:</strong> ${bookingData.time}</p>
+                    <p><strong>Total Cost:</strong> <span class="service-price text-lg">$${bookingData.price}</span></p>
+                </div>
+                <div class="text-center">
+                    <p class="font-semibold text-green-600">Status: Confirmed & Pending Payment</p>
+                </div>
+            `;
+
+            // Scroll to invoice
+            invoiceSection.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Handle email notification to owner
+        emailOwnerBtn.addEventListener('click', function() {
+            const subject = encodeURIComponent('New Appointment Booking - Elite Cuts');
+            const body = encodeURIComponent(
+                `New booking notification:\n\n` +
+                `Customer: ${bookingData.name}\n` +
+                `Email: ${bookingData.email}\n` +
+                `Phone: ${bookingData.phone}\n` +
+                `Service: ${bookingData.service}\n` +
+                `Date: ${new Date(bookingData.date).toDateString()} at ${bookingData.time}\n` +
+                `Price: $${bookingData.price}\n` +
+                `Invoice ID: INV-${bookingData.invoiceId}\n\n` +
+                `Please confirm availability and contact the customer if needed.`
+            );
+            
+            // Note: Replace 'owner@elitecuts.com' with actual owner email
+            window.location.href = `mailto:dynamic9356@gmail.com?subject=${subject}&body=${body}`;
+            
+            alert('Opening email client to notify the owner. Please review and send the email.');
+        });
+
+        // Handle download invoice as PDF
+        downloadInvoiceBtn.addEventListener('click', function() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Invoice header
+            doc.setFontSize(20);
+            doc.text('Elite Cuts Barber Shop', 105, 20, { align: 'center' });
+            doc.setFontSize(12);
+            doc.text('Professional Grooming Services', 105, 28, { align: 'center' });
+            doc.text('123 Main Street, Downtown City, ST 12345', 105, 35, { align: 'center' });
+            doc.text('Phone: (555) 123-4567 | Email: info@elitecutsbarber.com', 105, 42, { align: 'center' });
+
+            doc.line(20, 50, 190, 50);
+
+            // Invoice details
+            doc.setFontSize(14);
+            doc.text('INVOICE RECEIPT', 20, 60);
+            doc.setFontSize(10);
+            doc.text(`Invoice ID: INV-${bookingData.invoiceId}`, 20, 70);
+            doc.text(`Issue Date: ${bookingData.invoiceDate}`, 140, 70);
+            
+            doc.text('Customer Details:', 20, 85);
+            doc.text(`Name: ${bookingData.name}`, 20, 95);
+            doc.text(`Email: ${bookingData.email}`, 20, 105);
+            doc.text(`Phone: ${bookingData.phone}`, 20, 115);
+            
+            doc.text('Service Information:', 20, 130);
+            doc.text(`Service: ${bookingData.service}`, 20, 140);
+            doc.text(`Appointment Date: ${new Date(bookingData.date).toDateString()}`, 20, 150);
+            doc.text(`Appointment Time: ${bookingData.time}`, 20, 160);
+            doc.text(`Total Cost: $${bookingData.price}`, 20, 170);
+            
+            doc.line(20, 180, 190, 180);
+            doc.text('Status: Confirmed & Pending Payment', 20, 190);
+            doc.text('Thank you for choosing Elite Cuts!', 105, 205, { align: 'center' });
+
+            // Save PDF with dynamic filename
+            const filename = `Invoice_${bookingData.name.replace(/\s+/g, '_')}_${bookingData.invoiceId}.pdf`;
+            doc.save(filename);
+
+            // Show success message
+            alert('Invoice downloaded successfully!');
+        });
+
+        // Utility function to validate date (ensure it's not in the past)
+        function validateDate() {
+            const dateInput = document.getElementById('date');
+            const selectedDate = new Date(dateInput.value);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            if (selectedDate < today) {
+                alert('Please select a date in the future.');
+                dateInput.value = '';
+            }
+        }
+
+        // Add date validation
+        document.getElementById('date').addEventListener('change', validateDate);
+    </script>
+</body>
+</html>
+</content>
+</create_file>   
+
